@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/D:/%23FPT_Syllabus/Sem4.summer2022/prj/handOn/MVC2SE1614SU22/src/java/huynq/registration/RegistrationDAO.java</file>
+            <file>file:/D:/%23FPT_Syllabus/Sem4.summer2022/prj/handOn/MVC2SE1614SU22/web/search.jsp</file>
+            <file>file:/D:/%23FPT_Syllabus/Sem4.summer2022/prj/handOn/MVC2SE1614SU22/src/java/huynq/ordered/OrderedDAO.java</file>
+            <file>file:/D:/%23FPT_Syllabus/Sem4.summer2022/prj/handOn/MVC2SE1614SU22/src/java/huynq/cart/CartObject.java</file>
+            <file>file:/D:/%23FPT_Syllabus/Sem4.summer2022/prj/handOn/MVC2SE1614SU22/src/java/huynq/controller/CheckOutServlet.java</file>
+            <file>file:/D:/%23FPT_Syllabus/Sem4.summer2022/prj/handOn/MVC2SE1614SU22/web/viewcart.jsp</file>
+            <file>file:/D:/%23FPT_Syllabus/Sem4.summer2022/prj/handOn/MVC2SE1614SU22/web/shopping.jsp</file>
+            <file>file:/D:/%23FPT_Syllabus/Sem4.summer2022/prj/handOn/MVC2SE1614SU22/src/java/huynq/controller/RemoveCartServlet.java</file>
+            <file>file:/D:/%23FPT_Syllabus/Sem4.summer2022/prj/handOn/MVC2SE1614SU22/src/java/huynq/controller/DeleteAccountServlet.java</file>
+            <file>file:/D:/%23FPT_Syllabus/Sem4.summer2022/prj/handOn/MVC2SE1614SU22/web/detail.jsp</file>
+            <file>file:/D:/%23FPT_Syllabus/Sem4.summer2022/prj/handOn/MVC2SE1614SU22/src/java/huynq/controller/LogoutServlet.java</file>
+            <file>file:/D:/%23FPT_Syllabus/Sem4.summer2022/prj/handOn/MVC2SE1614SU22/src/java/huynq/ordered_detail/OrderedDetailDAO.java</file>
+            <file>file:/D:/%23FPT_Syllabus/Sem4.summer2022/prj/handOn/MVC2SE1614SU22/web/login.html</file>
+            <file>file:/D:/%23FPT_Syllabus/Sem4.summer2022/prj/handOn/MVC2SE1614SU22/src/java/huynq/product/ProductDAO.java</file>
+            <file>file:/D:/%23FPT_Syllabus/Sem4.summer2022/prj/handOn/MVC2SE1614SU22/src/java/huynq/controller/DispatchController.java</file>
+        </group>
+    </open-files>
+</project-private>
