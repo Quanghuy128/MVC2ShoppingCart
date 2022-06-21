@@ -12,9 +12,12 @@
         <title>Error</title>
     </head>
     <body>
-        <h1 color="red" text-align="center">Error May Be Existed</h1> <br/>
+        <h1 style="color:red;text-align: center">Error May Be Existed</h1> <br/>
         <%
-            request.getAttribute("ERROR");
+            String error = (String)request.getAttribute("Error");
         %>
+         <font color="red"><%= error %></font>
+        <br/>
+        <a href="login.html">Click here to try again</a>
     </body>
 </html>

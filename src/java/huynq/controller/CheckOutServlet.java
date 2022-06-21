@@ -74,9 +74,19 @@ public class CheckOutServlet extends HttpServlet {
                             if (selectedItems != null) {
                                 ProductDAO p_dao = new ProductDAO();
                                 
+                                int existed_quantity = 0;
+                                int cart_quantity = 0;
                                 for (String item : selectedItems) {
-                                    //get total price = ProductDAO.getPrice() * session.quantity
-                                    totalPrice += (cart.getItems().get(item) * p_dao.getProduct(item).getPrice());
+                                    existed_quantity = p_dao.getQuantity(item);
+                                    cart_quantity = cart.getItems().get(item);
+                                    if (existed_quantity >= cart_quantity) {
+                                        //get total price = ProductDAO.getPrice() * session.quantity
+                                        totalPrice += (cart_quantity * p_dao.getProduct(item).getPrice());
+                                        existed_quantity = existed_quantity - cart_quantity;
+                                        p_dao.setQuantity(item, existed_quantity);
+                                    }else {
+                                        invalid_items.add(item);
+                                    }
                                 }
                                 
                                 OrderedDAO dao = new OrderedDAO();
@@ -87,13 +97,15 @@ public class CheckOutServlet extends HttpServlet {
                                 OrderedDetailDAO order_detail_dao = new OrderedDetailDAO();
                                 boolean result = false;
                                 for (String item : selectedItems) {
-                                    result = order_detail_dao.addOrderDetail(item,
-                                                                            cart.getItems().get(item),
-                                                                            p_dao.getProduct(item).getPrice(),
-                                                                            p_dao.getProduct(item).getPrice() * cart.getItems().get(item),
-                                                                            order_id);
-                                    if (result) {
-                                        cart.removeBookFromCart(item);
+                                    if(!invalid_items.contains(item)) {
+                                        result = order_detail_dao.addOrderDetail(item,
+                                                                                cart.getItems().get(item),
+                                                                                p_dao.getProduct(item).getPrice(),
+                                                                                p_dao.getProduct(item).getPrice() * cart.getItems().get(item),
+                                                                                order_id);
+                                        if (result) {
+                                            cart.removeBookFromCart(item);
+                                        }
                                     }
                                 }
                                 //update session

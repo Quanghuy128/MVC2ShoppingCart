@@ -145,11 +145,10 @@ public class ProductDAO {
         return 0;
     }
     
-    public int setQuantity(String productName, int quantity) 
+    public boolean setQuantity(String productName, int quantity) 
         throws SQLException, NamingException{
         Connection con = null;
         PreparedStatement stmt = null;
-        ResultSet rs = null;
         try {
            //1.make connection
            con = DBHelper.makeConnection();
@@ -162,15 +161,12 @@ public class ProductDAO {
            stmt.setInt(1,quantity);
            stmt.setString(2,productName);
            //4.execute query
-           rs = stmt.executeQuery();
+           int affectedRows = stmt.executeUpdate();
            //5.process
-           if(rs.next()) {
-               return rs.getInt("quantity");
+           if(affectedRows > 0) {
+               return true;
             }
         }finally {
-             if (rs != null) {
-                rs.close();
-            }
             if (stmt != null) {
                 stmt.close();
             }
@@ -178,6 +174,6 @@ public class ProductDAO {
                 con.close();
             }
         }
-        return 0;
+        return false;
     }
 }
