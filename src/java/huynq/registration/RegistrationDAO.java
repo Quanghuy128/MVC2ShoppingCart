@@ -33,6 +33,46 @@ public class RegistrationDAO implements Serializable {
             con = DBHelper.makeConnection();
             if (con != null) {
                 //2.Create SQL String
+                String sql = "Select username "
+                        + "From Registration "
+                        + "Where username = ? and password = ?";
+                //3.Create Statement Object
+                stmt = con.prepareStatement(sql);
+                stmt.setString(1, username);
+                stmt.setString(2, password);
+                //4.Execute Query
+                rs = stmt.executeQuery();
+                //5.Process result
+                if(rs.next()){
+                    result = true; 
+                }
+            }//end if con is not null
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+
+        return result;
+    }
+    
+    public boolean getRole(String username, String password)
+            throws SQLException, NamingException {
+        Connection con = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        boolean result = false;
+        try {
+            //1.Make connection
+            con = DBHelper.makeConnection();
+            if (con != null) {
+                //2.Create SQL String
                 String sql = "Select isAdmin "
                         + "From Registration "
                         + "Where username = ? and password = ?";

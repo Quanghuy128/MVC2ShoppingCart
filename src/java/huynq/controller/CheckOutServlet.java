@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
@@ -58,9 +59,9 @@ public class CheckOutServlet extends HttpServlet {
                     }
                 }
             }
+            //1. customer goes to place
+            HttpSession session = request.getSession(false);
             if(username != null) {
-                //1. customer goes to place
-                HttpSession session = request.getSession(false);
                 if (session != null) {
                     //2. Customer takes cart
                     CartObject cart = (CartObject) session.getAttribute("CART");
@@ -86,15 +87,13 @@ public class CheckOutServlet extends HttpServlet {
                                 OrderedDetailDAO order_detail_dao = new OrderedDetailDAO();
                                 boolean result = false;
                                 for (String item : selectedItems) {
-                                    if(!invalid_items.contains(item)) {
-                                        result = order_detail_dao.addOrderDetail(item,
-                                                                                cart.getItems().get(item),
-                                                                                p_dao.getProduct(item).getPrice(),
-                                                                                p_dao.getProduct(item).getPrice() * cart.getItems().get(item),
-                                                                                order_id);
-                                        if (result) {
-                                            cart.removeBookFromCart(item);
-                                        }
+                                    result = order_detail_dao.addOrderDetail(item,
+                                                                            cart.getItems().get(item),
+                                                                            p_dao.getProduct(item).getPrice(),
+                                                                            p_dao.getProduct(item).getPrice() * cart.getItems().get(item),
+                                                                            order_id);
+                                    if (result) {
+                                        cart.removeBookFromCart(item);
                                     }
                                 }
                                 //update session
@@ -103,13 +102,24 @@ public class CheckOutServlet extends HttpServlet {
                         }
                     }
                 }
+                response.sendRedirect("DispatchController"
+                    + "?btAction=View Your Cart");
+            }else {
+                ServletContext sc = getServletContext();
+                sc.setAttribute("CART_TEMP", session.getAttribute("CART"));
+                response.sendRedirect("login.html");
             }
-        } catch (NamingException e) {
-        } catch (SQLException e) {
+        } catch (NamingException ex) {
+            log(ex.getMessage());
+            request.setAttribute("Error", ex.getMessage());
+            RequestDispatcher rd = request.getRequestDispatcher("error.jsp");
+            rd.forward(request, response);
+        } catch (SQLException ex) {
+            log(ex.getMessage());
+            request.setAttribute("Error", ex.getMessage());
+            RequestDispatcher rd = request.getRequestDispatcher("error.jsp");
+            rd.forward(request, response);
         } finally {
-            String urlRewriting = "DispatchController"
-                    + "?btAction=View Your Cart";
-            response.sendRedirect(urlRewriting);
         }
     }
 

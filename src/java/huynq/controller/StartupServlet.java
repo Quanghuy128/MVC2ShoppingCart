@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import javax.naming.NamingException;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
@@ -44,30 +45,37 @@ public class StartupServlet extends HttpServlet {
             Cookie[] cookies = request.getCookies();
             
             if(cookies!=null) {
-                    //find final cookie
-                    Cookie lastCookie = cookies[cookies.length - 1];
                     //read information
                     String username = null;
                     String password = null;
                     for (int i=cookies.length-1; i >= 0;i--) {
                         if(!cookies[i].getName().equals("JESSIONID")) {
-                            username = cookies[i].getName();
+                            username = cookies[i].getName();    
                             password = cookies[i].getValue();
                         }
                     }
                     //call Dao
                     RegistrationDAO dao = new RegistrationDAO();
-                    boolean isAdmin = dao.checkLogin(username, password);
-                    if(isAdmin) {
-                        url = SEARCH_PAGE;
-                    }else {
-                        url = SHOPPING_PAGE;
-                    }//end authentication is ok
+                    boolean result = dao.checkLogin(username, password);
+                    if(result) {
+                        boolean isAdmin = dao.getRole(username, password);
+                        if(isAdmin) {
+                            url = SEARCH_PAGE;
+                        }else {
+                            url = SHOPPING_PAGE;
+                        }//end authentication is ok
+                    }
             }//end cookies has existed
-        }catch(NamingException e){
-            e.printStackTrace();
-        }catch(SQLException e){
-            e.printStackTrace();
+        }catch(NamingException ex){
+            log(ex.getMessage());
+            request.setAttribute("Error", ex.getMessage());
+            RequestDispatcher rd = request.getRequestDispatcher("error.jsp");
+            rd.forward(request, response);
+        }catch(SQLException ex){
+            log(ex.getMessage());
+            request.setAttribute("Error", ex.getMessage());
+            RequestDispatcher rd = request.getRequestDispatcher("error.jsp");
+            rd.forward(request, response);
         }finally {
             response.sendRedirect(url);
         }

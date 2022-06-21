@@ -38,6 +38,10 @@
         %>
         <h1>Your Cart includes</h1>
         <%
+            if(application.getAttribute("CART_TEMP") != null) {
+                session.setAttribute("CART", application.getAttribute("CART_TEMP"));
+                application.removeAttribute("CART_TEMP");
+            }
             //1.customer goes to cart place
             if(session != null) {
                 //2. Customer takes his/her cart

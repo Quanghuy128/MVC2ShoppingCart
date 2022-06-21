@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import javax.naming.NamingException;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -52,10 +53,16 @@ public class DeleteAccountServlet extends HttpServlet {
                                 + "?btAction=Search"
                                 + "&txtSearchValue=" + searchValue;
             }//end delete is succeed
-        }catch (NamingException e) {
-            e.printStackTrace();
-        }catch (SQLException e) {
-            e.printStackTrace();
+        }catch (NamingException ex) {
+            log(ex.getMessage());
+            request.setAttribute("Error", ex.getMessage());
+            RequestDispatcher rd = request.getRequestDispatcher("error.jsp");
+            rd.forward(request, response);
+        }catch (SQLException ex) {
+            log(ex.getMessage());
+            request.setAttribute("Error", ex.getMessage());
+            RequestDispatcher rd = request.getRequestDispatcher("error.jsp");
+            rd.forward(request, response);
         }finally {
             response.sendRedirect(urlRewriting); // kh dc forward vì có btaction=delete đã có trc đó -> forward giữ delete + search(urlwriting) // kh dc xài forward đôi với urlrewrting
         }

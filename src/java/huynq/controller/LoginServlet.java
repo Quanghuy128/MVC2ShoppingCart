@@ -50,24 +50,31 @@ public class LoginServlet extends HttpServlet {
             //1. call DAO
             //new Object DAO && call method from DAO
             RegistrationDAO dao = new RegistrationDAO();
-            boolean isAdmin = dao.checkLogin(username, password);
+            boolean result = dao.checkLogin(username, password);
             
             Cookie cookie = new Cookie(username, password);
             cookie.setMaxAge(60*3);
-            
-            //2.Process
-            if (isAdmin) {
-                url = SEARCH_PAGE;
-                response.addCookie(cookie);
-            }else {
-                url = SHOPPING_PAGE;
-                response.addCookie(cookie);
-            }
-
-        } catch (NamingException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
+                if (result) {
+                    //2.Process
+                    boolean isAdmin = dao.getRole(username, password);
+                    if (isAdmin) {
+                        url = SEARCH_PAGE;
+                        response.addCookie(cookie);
+                    }else {
+                        url = SHOPPING_PAGE;
+                        response.addCookie(cookie); 
+                    }
+                }
+        } catch (NamingException ex) {
+            log(ex.getMessage());
+            request.setAttribute("Error", ex.getMessage());
+            RequestDispatcher rd = request.getRequestDispatcher("error.jsp");
+            rd.forward(request, response);
+        } catch (SQLException ex) {
+            log(ex.getMessage());
+            request.setAttribute("Error", ex.getMessage());
+            RequestDispatcher rd = request.getRequestDispatcher("error.jsp");
+            rd.forward(request, response);
         } finally {
             response.sendRedirect(url);
 //            RequestDispatcher rd = request.getRequestDispatcher(url);
