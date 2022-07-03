@@ -62,6 +62,49 @@ public class RegistrationDAO implements Serializable {
         return result;
     }
     
+    public RegistrationDTO getUser(String username, String password)
+            throws SQLException, NamingException {
+        Connection con = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        RegistrationDTO result = null;
+        try {
+            //1.Make connection
+            con = DBHelper.makeConnection();
+            if (con != null) {
+                //2.Create SQL String
+                String sql = "Select username, password, lastname, isAdmin "
+                        + "From Registration "
+                        + "Where username = ? and password = ?";
+                //3.Create Statement Object
+                stmt = con.prepareStatement(sql);
+                stmt.setString(1, username);
+                stmt.setString(2, password);
+                //4.Execute Query
+                rs = stmt.executeQuery();
+                //5.Process result
+                if(rs.next()){
+                    result = new RegistrationDTO(rs.getString("username"), 
+                            rs.getString("password"), 
+                            rs.getString("lastname"), 
+                            rs.getBoolean("isAdmin")); 
+                }
+            }//end if con is not null
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+
+        return result;
+    }
+    
     public boolean getRole(String username, String password)
             throws SQLException, NamingException {
         Connection con = null;

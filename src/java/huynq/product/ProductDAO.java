@@ -30,7 +30,7 @@ public class ProductDAO {
     }
     
 
-    public void getItemList()
+    public void loadItems()
             throws SQLException, NamingException {
         Connection con = null;
         PreparedStatement stmt = null;

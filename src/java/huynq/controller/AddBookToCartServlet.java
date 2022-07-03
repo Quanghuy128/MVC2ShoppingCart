@@ -20,7 +20,6 @@ import javax.servlet.http.HttpSession;
  */
 @WebServlet(name = "AddBookToCartServlet", urlPatterns = {"/AddBookToCartServlet"})
 public class AddBookToCartServlet extends HttpServlet {
-    private final String SHOPPING_PAGE = "shopping.jsp";
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -33,7 +32,6 @@ public class AddBookToCartServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = SHOPPING_PAGE;
         try {
             //1.customer goes to cart place
             HttpSession session = request.getSession();//true
@@ -50,7 +48,7 @@ public class AddBookToCartServlet extends HttpServlet {
             
             
         } finally {
-            response.sendRedirect(url);
+            response.sendRedirect("DispatchController?btAction=ListItemsInView");
         }
     }
 

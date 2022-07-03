@@ -6,6 +6,7 @@
 package huynq.controller;
 
 import huynq.registration.RegistrationDAO;
+import huynq.registration.RegistrationInsertError;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -23,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "CreateAccountServlet", urlPatterns = {"/CreateAccountServlet"})
 public class CreateAccountServlet extends HttpServlet {
-    private final String INVALID_PAGE = "invalid.html";
+    private final String CREATE_ACCOUNT_PAGE = "create_account.jsp";
     private final String LOGIN_PAGE = "login.html";
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,32 +38,55 @@ public class CreateAccountServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = INVALID_PAGE;
+        String url = CREATE_ACCOUNT_PAGE;
         
         String username = request.getParameter("txtUsername");
         String password = request.getParameter("txtPassword");
         String confirmPassword = request.getParameter("txtConfirm");
         String fullname = request.getParameter("txtFullname");
+        
+        RegistrationInsertError errors = new RegistrationInsertError();
+        boolean foundErr = false;
         try {
-            //1.call dao
-            RegistrationDAO dao = new RegistrationDAO();
-            boolean result = dao.createAccount(username,password,fullname,false);
-            //2.process
-            if(result) {
-                url = LOGIN_PAGE;
+            if (username.trim().length() <= 0) {
+                foundErr = true;
+                errors.setUsernameLengthError("Username require not null");
             }
+            if (password.trim().length() < 5) {
+                foundErr = true;
+                errors.setPasswordLenghtError("Password require length >= 5");
+            } else if (!confirmPassword.equals(password)) {
+                foundErr = true;
+                errors.setConfirmNotMatched("Confirm is not matched");
+            }
+            if (fullname.trim().length() <= 0) {
+                foundErr = true;
+                errors.setFullNameLengthError("FullName require not null");
+            }
+            
+            if (foundErr == true) {
+                request.setAttribute("ERROR", errors);
+            } else {
+                RegistrationDAO dao = new RegistrationDAO();
+                boolean result = dao.createAccount(username, password, fullname, false);
+                if (result == true) {
+                    url = LOGIN_PAGE;
+                }
+            }
+           
         }catch (SQLException ex) {
-            log(ex.getMessage());
-            request.setAttribute("Error", ex.getMessage());
-            RequestDispatcher rd = request.getRequestDispatcher("error.jsp");
-            rd.forward(request, response);
+            String msg = ex.getMessage();
+            log("CreateAccountServlet _ SQL _ " + ex.getMessage());
+            if(msg.contains("duplicate")) {
+                errors.setUsernameExisted(username + " existed!!!");
+                request.setAttribute("ERROR", errors);
+            }
         }catch (NamingException ex) {
-            log(ex.getMessage());
-            request.setAttribute("Error", ex.getMessage());
-            RequestDispatcher rd = request.getRequestDispatcher("error.jsp");
-            rd.forward(request, response);
+            log("CreateAccountServlet _ Naming _ " + ex.getMessage());
+            
         }finally {
-            response.sendRedirect(url);
+            RequestDispatcher rd = request.getRequestDispatcher(url);
+            rd.forward(request, response);
         }
     }
 

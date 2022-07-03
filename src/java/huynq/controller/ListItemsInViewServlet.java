@@ -5,34 +5,29 @@
  */
 package huynq.controller;
 
-import huynq.registration.RegistrationDAO;
-import huynq.registration.RegistrationDTO;
-import huynq.utils.DBHelper;
+import huynq.product.ProductDAO;
+import huynq.product.ProductDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  *
- * @author asus
+ * @author huy
  */
-public class LoginServlet extends HttpServlet {
-
-    private final String INVALID_PAGE = "invalid.html";
-    private final String SEARCH_PAGE = "search.jsp";
+@WebServlet(name = "ListItemsInViewServlet", urlPatterns = {"/ListItemsInViewServlet"})
+public class ListItemsInViewServlet extends HttpServlet {
+    private final String ERROR_PAGE = "error.html";
     private final String SHOPPING_PAGE = "shopping.jsp";
-
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -45,37 +40,20 @@ public class LoginServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = INVALID_PAGE;
-        RegistrationDTO result = null;
+        String url = ERROR_PAGE;
         try {
-            String username = request.getParameter("txtUsername");
-            String password = request.getParameter("txtPassword");
-            //1. call DAO
-            //new Object DAO && call method from DAO
-            RegistrationDAO dao = new RegistrationDAO();
-            result = dao.getUser(username, password);
-            if (result != null) {
-                if (result.isRole()) {
-                    url = SEARCH_PAGE;
-                } else {
-                    url = "DispatchController?btAction=ListItemsInView";
-                }
-                request.getSession().setAttribute("USER", result);
-            }
-        } catch (NamingException ex) {
-            log(ex.getMessage());
-            request.setAttribute("Error", ex.getMessage());
-            RequestDispatcher rd = request.getRequestDispatcher("error.jsp");
+            ProductDAO dao = new ProductDAO();
+            dao.loadItems();
+            ArrayList<ProductDTO> list = (ArrayList)dao.getItems();
+            request.setAttribute("PRODUCTS", list);
+            url = SHOPPING_PAGE;
+        }catch(NamingException ex) {
+        
+        }catch(SQLException ex) {
+        
+        }finally {
+            RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);
-        } catch (SQLException ex) {
-            log(ex.getMessage());
-            request.setAttribute("Error", ex.getMessage());
-            RequestDispatcher rd = request.getRequestDispatcher("error.jsp");
-            rd.forward(request, response);
-        } finally {
-            response.sendRedirect(url);
-//            RequestDispatcher rd = request.getRequestDispatcher(url);
-//            rd.forward(request, response);
         }
     }
 

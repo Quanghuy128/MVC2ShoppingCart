@@ -4,10 +4,9 @@
     Author     : huy
 --%>
 
-<%@page import="java.util.List"%>
-<%@page import="huynq.product.ProductDAO"%>
-<%@page import="huynq.product.ProductDTO"%>
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -16,65 +15,46 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        <%
-            Cookie[] cookies = request.getCookies();
-            if (cookies != null) {
-                for (int i=cookies.length-1; i >= 0;i--) {
-                    if (!cookies[i].getName().equals("JSESSIONID")) {
-                        %> 
-                        <font color="red">Welcome <%= cookies[i].getName()%></font>
-                        </br>
-                        <form action="DispatchController">
-                            <input type="submit" value="Log Out" name="btAction" />
-                        </form>
-        <%
-                    break;
-                    }
-                }
-            }
-        %>
+
+        <font color="red">Welcome ${sessionScope.USER.fullName}</font>
+        </br>
+        <form action="DispatchController">
+            <input type="submit" value="Log Out" name="btAction" />
+        </form>
+
         <h1>Book Store</h1>
-        <%
-            ProductDAO dao = new ProductDAO();
-            dao.getItemList();
-            List<ProductDTO> list = (List<ProductDTO>)dao.getItems();
-            if(list != null) {
-                %>
-                <table border="1">
-                    <thead>
-                        <tr>
-                            <th>No.</th>
-                            <th>Product</th>
-                            <th>Price</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <%
-                            int count = 0;
-                            for (ProductDTO dto : list) {
-                                    %>
-                                    <tr>
-                                        <td><%= ++count %></td>
-                                        <td><%= dto.getName() %></td>
-                                        <td><%= (double)Math.round(dto.getPrice()) %>$</td>
-                                        <td>
-                                            <form action="DispatchController" method="POST">
-                                                <input type="hidden" name="cboBook" value="<%= dto.getName() %>" />
-                                                <input type="submit" name="btAction" value="Add Book to your Cart" />
-                                            </form>
-                                        </td>
-                                    </tr>
-                        <%
-                            }
-                        %>
-                    </tbody>
-                </table>
+        <c:set var="listItems" value="${requestScope.PRODUCTS}"/>
+        <c:set var="cart" value="${sessionScope.CART}"/>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Title</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <c:forEach var="item" items="${listItems}" varStatus="counter">
+                <form action="DispatchController">
+                    <tr>
+                        <td>${counter.count}</td>
+                        <td>
+                            ${item.name}
+                            <input type="hidden" name="cboBook" value="${item.name}" />    
+                        </td>
+                        <td>${item.price}</td>
+                        <td>${item.quantity}</td>
+                        <td>
+                            <input type="submit" value="Add Book to your Cart" name="btAction" />
+                        </td>
+                    </tr>
+                </form>
+            </c:forEach>
+        </tbody>
+    </table>
 
-        <%
-            }
-
-        %>
-        <a href="viewcart.jsp">View your Cart</a>
-    </body>
+    <a href="DispatchController?btAction=ViewCart">View your Cart</a>
+</body>
 </html
