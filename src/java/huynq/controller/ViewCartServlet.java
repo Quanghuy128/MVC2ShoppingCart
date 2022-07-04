@@ -11,6 +11,7 @@ import huynq.product.ProductDTO;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
@@ -41,7 +42,7 @@ public class ViewCartServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String url = ERROR_PAGE;
-        Map<ProductDTO,Integer> map = null;
+        Map<ProductDTO,Integer> map = new HashMap<>();
         try {
             ProductDAO dao = new ProductDAO();
             dao.loadItems();
@@ -51,7 +52,9 @@ public class ViewCartServlet extends HttpServlet {
             if(cart != null && items != null) {
                 for (String key : items.keySet()) {
                     dto = dao.getProduct(key);
-                    map.put(dto, items.get(key));
+                    if(dto != null) {
+                        map.put(dto, items.get(key));
+                    }
                 }
             }
             request.setAttribute("ITEM_IN_CART", map);

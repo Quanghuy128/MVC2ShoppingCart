@@ -39,12 +39,13 @@
                 <form action="DispatchController">
                     <tbody>
                         <c:forEach var="item" items="${cart}" varStatus="counter">
+                            <c:set var="total" value="${item.value * item.key.price}"></c:set>
                             <tr>
                                 <td>${counter.count}</td>
                                 <td>${item.key.name}</td>
                                 <td>${item.key.price}</td>
                                 <td>${item.value}</td>
-                                <td>${item.value} * ${item.key.price}</td>
+                                <td>${total}</td>
                                 <td><input type="checkbox" name="chkItem" value="${item.key}" /></td>
                                 <td>
                                     <a href="DispatchController?btAction=ViewDetail&pk=${item.key}>">Detail</a>
@@ -72,6 +73,6 @@
             No items in your cart!!!! 
         </c:if>
         <br/>
-        <a href="shopping.jsp">Buy More Books </a>
+        <a href="DispatchController?btAction=ListItemsInView">Buy More Books </a>
     </body>
 </html

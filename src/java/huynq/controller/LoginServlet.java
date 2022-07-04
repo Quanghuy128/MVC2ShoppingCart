@@ -50,6 +50,12 @@ public class LoginServlet extends HttpServlet {
         try {
             String username = request.getParameter("txtUsername");
             String password = request.getParameter("txtPassword");
+            
+            //add cookie
+            Cookie cookie = new Cookie(username, password);
+            cookie.setMaxAge(60*3);
+            response.addCookie(cookie);
+            
             //1. call DAO
             //new Object DAO && call method from DAO
             RegistrationDAO dao = new RegistrationDAO();

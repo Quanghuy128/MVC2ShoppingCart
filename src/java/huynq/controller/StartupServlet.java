@@ -6,6 +6,7 @@
 package huynq.controller;
 
 import huynq.registration.RegistrationDAO;
+import huynq.registration.RegistrationDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -56,14 +57,15 @@ public class StartupServlet extends HttpServlet {
                     }
                     //call Dao
                     RegistrationDAO dao = new RegistrationDAO();
-                    boolean result = dao.checkLogin(username, password);
-                    if(result) {
+                    RegistrationDTO result = dao.getUser(username, password);
+                    if(result!=null) {
                         boolean isAdmin = dao.getRole(username, password);
                         if(isAdmin) {
                             url = SEARCH_PAGE;
                         }else {
                             url = SHOPPING_PAGE;
                         }//end authentication is ok
+                        request.getSession().setAttribute("USER", result);
                     }
             }//end cookies has existed
         }catch(NamingException ex){
